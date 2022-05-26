@@ -3,6 +3,7 @@ import cors from 'cors';
 import express from 'express';
 import rateLimit from 'express-rate-limit';
 import { handleError } from './utils/handleError';
+import './utils/db';
 
 const PORT = 5000;
 
