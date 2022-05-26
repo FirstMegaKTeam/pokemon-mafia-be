@@ -2,6 +2,7 @@ import 'express-async-errors';
 import cors from 'cors';
 import express from 'express';
 import rateLimit from 'express-rate-limit';
+import { handleError } from './utils/handleError';
 
 const PORT = 5000;
 
@@ -17,5 +18,10 @@ app.use(rateLimit({
 }));
 
 app.use(express.json());
+
+// Routers
+
+// global handleError
+app.use(handleError);
 
 app.listen(PORT, 'localhost', () => console.log(`Server listen on http://localhost:${PORT}`));
