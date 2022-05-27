@@ -1,22 +1,7 @@
 import { nanoid } from 'nanoid';
-import { FieldPacket } from 'mysql2';
 import { ValidationError } from '../utils/handleError';
 import { pool } from '../utils/db';
-
-interface UserCreate {
-  id?: string;
-  name: string;
-  email: string;
-  password: string;
-  age: number;
-}
-
-interface UserEntity extends UserCreate{
-  id: string;
-
-}
-
-type UserResult = [UserEntity[], FieldPacket[]]
+import { UserEntity, UserResult, UserCreate } from '../types';
 
 export class UserRecord implements UserEntity {
   id: string;
@@ -43,24 +28,33 @@ export class UserRecord implements UserEntity {
   }
 
   private validate() {
-    const RegEx = /[a-z\d!#$%&'*+/=?^_`{|}~-]+(?:\.[a-z0-9!#$%&'*+/=?^_`{|}~-]+)*@(?:[a-z\d](?:[a-z\d-]*[a-z\d])?\.)+[a-z\d](?:[a-z\d-]*[a-z\d])?/;
+    const RegEx = /[a-z\d!#$%&'*+/=?^_`{|}~-]+(?:\.[a-z\d!#$%&'*+/=?^_`{|}~-]+)*@(?:[a-z\d](?:[a-z\d-]*[a-z\d])?\.)+[a-z\d](?:[a-z\d-]*[a-z\d])?/;
 
     const emailIsIncorrect = !RegEx.test(this.email);
+
+    if (!this.email) {
+      throw new ValidationError('Email is required', 404);
+    }
+
+    if (this.email.trim().length > 4 || this.email.trim().length > 300) {
+      throw new ValidationError('Email length cant be less than 4 and greater than 300', 404);
+    }
 
     if (emailIsIncorrect) {
       throw new ValidationError('Your email is incorrect', 404);
     }
-    if (this.name.trim().length < 3 || this.name.trim().length > 40) {
+
+    if (!this.name) {
+      throw new ValidationError('Name must exist', 404);
+    }
+    if (this.name.trim().length <= 3 || this.name.trim().length > 40) {
       throw new ValidationError('Name must be at least 3 characters long and not more than 40', 404);
     }
-    if (this.email.trim().length > 300) {
-      throw new ValidationError('Email must be at least 300 characters long', 404);
-    }
 
-    if (this.age < 1 || this.age > 140) {
+    if (!this.age || this.age < 1 || this.age > 140) {
       throw new ValidationError('Age must be between 1 and 140', 404);
     }
-    if (!this.password) {
+    if (!this.password || this.password.trim().length === 0) {
       throw new ValidationError('Password cant be empty', 404);
     }
   }
