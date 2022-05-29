@@ -16,3 +16,5 @@
 //     decimalNumbers: true,
 //   },
 // };
+
+// export const JWT_SECRET ='Random char'

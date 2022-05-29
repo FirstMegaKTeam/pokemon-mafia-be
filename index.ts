@@ -4,6 +4,7 @@ import express from 'express';
 import rateLimit from 'express-rate-limit';
 import { handleError } from './utils/handleError';
 import './utils/db';
+import passport from './passport/passportStrategy';
 
 const PORT = 5000;
 
@@ -17,8 +18,8 @@ app.use(rateLimit({
   windowMs: 5 * 60 * 1000,
   max: 1000,
 }));
-
 app.use(express.json());
+app.use(passport.initialize());
 
 // Routers
 
