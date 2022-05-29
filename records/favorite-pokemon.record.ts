@@ -61,7 +61,7 @@ export class FavoritePokemonRecord implements FavoriteEntity {
   }
 
   static async createFavoritePokemonTable() {
-    await pool.execute('CREATE TABLE IF NOT EXISTS `favorite_pokemon`(`id` VARCHAR(21)  PRIMARY KEY NOT NULL, `userId` VARCHAR(21) , `pokemonId` VARCHAR(21)  NOT NULL,  FOREIGN KEY (`userId`) REFERENCES `users` (`id`) ON DELETE NO ACTION ON UPDATE NO ACTION)');
+    await pool.execute('CREATE TABLE IF NOT EXISTS `favorite_pokemon`(`id` VARCHAR(21)  PRIMARY KEY NOT NULL, `userId` VARCHAR(21) , `pokemonId` VARCHAR(21)  NOT NULL,  FOREIGN KEY (`userId`) REFERENCES `users` (`id`) ON DELETE CASCADE ON UPDATE CASCADE)');
   }
 
   async save() {

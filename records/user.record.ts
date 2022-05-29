@@ -2,6 +2,8 @@ import { nanoid } from 'nanoid';
 import { ValidationError } from '../utils/handleError';
 import { pool } from '../utils/db';
 import { UserEntity, UserResult, UserCreate } from '../types';
+import { FavoriteResult } from '../types/favorite-pokemon/favorite-result';
+import { FavoritePokemonRecord } from './favorite-pokemon.record';
 
 export class UserRecord implements UserEntity {
   #id!: string;
@@ -171,5 +173,12 @@ export class UserRecord implements UserEntity {
     await pool.execute('DELETE FROM `users` WHERE `id`=:id', {
       id: this.id,
     });
+  }
+
+  async getUserFavoritePokemon() {
+    const [result] = await pool.execute('SELECT  `favorite_pokemon`.`id`, `favorite_pokemon`.`pokemonId`, `favorite_pokemon`.`userId` FROM `users` INNER JOIN  `favorite_pokemon` ON `users`.`id` = `favorite_pokemon`.`userId` WHERE `users`.`id`= :id', {
+      id: this.id,
+    }) as FavoriteResult;
+    return result.map((fav) => new FavoritePokemonRecord(fav));
   }
 }
