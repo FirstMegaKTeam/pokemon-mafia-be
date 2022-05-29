@@ -18,7 +18,7 @@ export class UserRecord implements UserEntity {
     return this.#id;
   }
 
-  set id(id: string) {
+  private set id(id: string) {
     this.#id = id;
   }
 

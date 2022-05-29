@@ -1,5 +1,6 @@
 import { pool } from '../../utils/db';
 import { UserRecord } from '../../records/user.record';
+import { userId1, userId2 } from '../testUtils/usersId';
 
 const id = '34d27f76-c0ec-4ba7';
 
@@ -20,7 +21,7 @@ beforeAll(async () => {
   });
 
   user2 = new UserRecord({
-    id: 'b2f58a90-fc3d-4e9a-9',
+    id: userId1,
     email: 'john@doe.com',
     password: 'password',
     age: 12,
@@ -28,7 +29,7 @@ beforeAll(async () => {
   });
 
   user3 = new UserRecord({
-    id: 'c5c278c1-bf58-',
+    id: userId2,
     email: 'mdsdr@smith.com',
     password: 'password',
     age: 12,
