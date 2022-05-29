@@ -1,7 +1,8 @@
 {
     "env": {
         "es2021": true,
-        "node": true
+        "node": true,
+        "jest": true
     },
     "extends": [
         "airbnb-base"
@@ -16,6 +17,7 @@
     "rules": {
         "import/prefer-default-export": 0,
         "import/extensions": 0,
-        "import/no-unresolved": 0
+        "import/no-unresolved": 0,
+        "no-underscore-dangle": 0
     }
 }
