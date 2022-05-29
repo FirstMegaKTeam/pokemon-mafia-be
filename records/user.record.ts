@@ -4,39 +4,53 @@ import { pool } from '../utils/db';
 import { UserEntity, UserResult, UserCreate } from '../types';
 
 export class UserRecord implements UserEntity {
-  id: string;
+  #id!: string;
 
-  name: string;
+  #name!: string;
 
-  email: string;
+  #email!: string;
 
-  password: string;
+  #password!: string;
 
-  age: number;
+  #age!: number;
 
-  private readonly saved: boolean;
-
-  constructor(userData: UserCreate) {
-    this.saved = !!userData.id;
-    this.id = userData.id ?? nanoid();
-    this.name = userData.name;
-    this.email = userData.email;
-    this.password = userData.password;
-    this.age = userData.age;
-
-    this.validate();
+  get id() {
+    return this.#id;
   }
 
-  private validate() {
+  set id(id: string) {
+    this.#id = id;
+  }
+
+  get name() {
+    return this.#name;
+  }
+
+  set name(name: string) {
+    if (!name) {
+      throw new ValidationError('Name must exist', 404);
+    }
+    if (name.trim().length <= 3 || name.trim().length > 40) {
+      throw new ValidationError('Name must be at least 3 characters long and not more than 40', 404);
+    }
+
+    this.#name = name;
+  }
+
+  get email() {
+    return this.#email;
+  }
+
+  set email(email: string) {
     const RegEx = /[a-z\d!#$%&'*+/=?^_`{|}~-]+(?:\.[a-z\d!#$%&'*+/=?^_`{|}~-]+)*@(?:[a-z\d](?:[a-z\d-]*[a-z\d])?\.)+[a-z\d](?:[a-z\d-]*[a-z\d])?/;
 
-    const emailIsIncorrect = !RegEx.test(this.email);
-
-    if (!this.email) {
+    if (!email) {
       throw new ValidationError('Email is required', 404);
     }
 
-    if (this.email.trim().length > 4 || this.email.trim().length > 300) {
+    const emailIsIncorrect = !RegEx.test(email);
+
+    if (email.trim().length < 4 || email.trim().length > 300) {
       throw new ValidationError('Email length cant be less than 4 and greater than 300', 404);
     }
 
@@ -44,19 +58,49 @@ export class UserRecord implements UserEntity {
       throw new ValidationError('Your email is incorrect', 404);
     }
 
-    if (!this.name) {
-      throw new ValidationError('Name must exist', 404);
-    }
-    if (this.name.trim().length <= 3 || this.name.trim().length > 40) {
-      throw new ValidationError('Name must be at least 3 characters long and not more than 40', 404);
-    }
+    this.#email = email;
+  }
 
-    if (!this.age || this.age < 1 || this.age > 140) {
+  get age() {
+    return this.#age;
+  }
+
+  set age(age:number) {
+    if (!age || age < 1 || age > 140) {
       throw new ValidationError('Age must be between 1 and 140', 404);
     }
-    if (!this.password || this.password.trim().length === 0) {
+
+    this.#age = age;
+  }
+
+  get password() {
+    return this.#password;
+  }
+
+  set password(password: string) {
+    if (!password || password.trim().length === 0) {
       throw new ValidationError('Password cant be empty', 404);
     }
+
+    this.#password = password;
+  }
+
+  get property() {
+    return {
+      id: this.id,
+      name: this.name,
+      password: this.password,
+      email: this.email,
+      age: this.age,
+    };
+  }
+
+  constructor(userData: UserCreate) {
+    this.id = userData.id ?? nanoid();
+    this.name = userData.name;
+    this.email = userData.email;
+    this.password = userData.password;
+    this.age = userData.age;
   }
 
   static async createTable() {
@@ -84,8 +128,6 @@ export class UserRecord implements UserEntity {
   }
 
   async save() {
-    if (this.saved) throw new ValidationError('Cant create users again!', 404);
-
     await pool.execute('INSERT INTO `users` (`id`, `name`, `email`, `password`, `age` )VALUES(:id, :name, :email, :password, :age)', {
       id: this.id,
       name: this.name,
@@ -98,7 +140,22 @@ export class UserRecord implements UserEntity {
   }
 
   async update() {
-    this.validate();
+    const RegEx = /[a-z\d!#$%&'*+/=?^_`{|}~-]+(?:\.[a-z\d!#$%&'*+/=?^_`{|}~-]+)*@(?:[a-z\d](?:[a-z\d-]*[a-z\d])?\.)+[a-z\d](?:[a-z\d-]*[a-z\d])?/;
+
+    const emailIsIncorrect = !RegEx.test(this.email);
+
+    if (!this.email) {
+      throw new ValidationError('Email is required', 404);
+    }
+
+    if (this.email.trim().length < 4 || this.email.trim().length > 300) {
+      throw new ValidationError('Email length cant be less than 4 and greater than 300', 404);
+    }
+
+    if (emailIsIncorrect) {
+      throw new ValidationError('Your email is incorrect', 404);
+    }
+
     await pool.execute('UPDATE `users` SET  `name`=:name, `email`=:email, `password`=:password, `age`=:age WHERE `id`=:id', {
       name: this.name,
       email: this.email,
@@ -106,6 +163,7 @@ export class UserRecord implements UserEntity {
       age: this.age,
       id: this.id,
     });
+
     return this.id;
   }
 
