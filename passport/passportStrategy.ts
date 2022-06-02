@@ -7,6 +7,7 @@ import {
   VerifyCallback,
   VerifiedCallback,
 } from 'passport-jwt';
+import { Request } from 'express';
 import { JWT_SECRET } from '../config/config';
 import { ValidationError } from '../utils/handleError';
 import { UserRecord } from '../records/user.record';
@@ -19,10 +20,14 @@ interface Payload {
 }
 
 const JWTStrategy = passportJWT.Strategy;
-const ExtractJWT = passportJWT.ExtractJwt;
+const ExtractJWT = (req: Request) => {
+  let token = null;
+  if (req && req.cookies) token = req.signedCookies.auth;
+  return token;
+};
 
 const configJWTStrategy = {
-  jwtFromRequest: ExtractJWT.fromAuthHeaderAsBearerToken(),
+  jwtFromRequest: ExtractJWT,
   secretOrKey: JWT_SECRET,
 };
 
@@ -52,6 +57,7 @@ const verifyUser: VerifyCallback = async (payload: Payload, done) => {
     if (!user) {
       throw new Error();
     }
+    console.log(user);
     done(null, user);
   } catch (er) {
     done(er);
