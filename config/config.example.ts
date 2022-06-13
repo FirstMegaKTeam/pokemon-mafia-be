@@ -16,3 +16,7 @@
 //     decimalNumbers: true,
 //   },
 // };
+
+// export const JWT_SECRET ='Random char'
+
+// export const COOKIE_SIGN_SECRET = 'Random char';

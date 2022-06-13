@@ -9,6 +9,8 @@ export class ValidationError extends Error {
 
 // eslint-disable-next-line no-unused-vars
 export const handleError = (err: Error, _req: Request, res: Response, _next: NextFunction) => {
+  console.log(err);
+
   res
     .status(err instanceof ValidationError ? err.status : 500)
     .json({ Message: err instanceof ValidationError ? err.message : 'Sorry try later' });
