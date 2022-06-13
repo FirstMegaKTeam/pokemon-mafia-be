@@ -22,7 +22,7 @@ interface Payload {
 const JWTStrategy = passportJWT.Strategy;
 const ExtractJWT = (req: Request) => {
   let token = null;
-  if (req && req.cookies) token = req.signedCookies.auth;
+  if (req && req.signedCookies) token = req.signedCookies.auth;
   return token;
 };
 
