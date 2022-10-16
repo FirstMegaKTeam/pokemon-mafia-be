@@ -9,6 +9,7 @@ import passport from './passport/passportStrategy';
 import { registerRouter } from './routers/register-router';
 import { loginRouter } from './routers/login-router';
 import { COOKIE_SIGN_SECRET } from './config/config';
+import { favoritePokemonRouter } from './routers/favorite-pokemon-router';
 
 const PORT = 5000;
 
@@ -29,6 +30,7 @@ app.use(passport.initialize());
 // Routers
 app.use('/register', registerRouter);
 app.use('/login', passport.authenticate('login', { session: false, failWithError: true }), loginRouter);
+app.use('/favorite', passport.authenticate('userAccess', { session: false, failWithError: true }), favoritePokemonRouter);
 // app.get('/check', passport.authenticate('userAccess', { session: false, failWithError: true }), (_req, res, _next) => {
 //   res.json('work');
 // });
