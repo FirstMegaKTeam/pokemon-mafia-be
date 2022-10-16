@@ -72,15 +72,17 @@ export class FavoritePokemonRecord implements FavoriteEntity {
     });
   }
 
-  async remove() {
+  static async remove(id: string) {
     await pool.execute('DELETE FROM `favorite_pokemon` WHERE `id`=:id', {
-      id: this.id,
+      id,
     });
   }
 
-  static async getAll() {
-    const [result] = await pool.execute('SELECT * FROM `favorite_pokemon` WHERE 1') as FavoriteResult;
+  static async getAll(id: string) {
+    const [result] = await pool.execute('SELECT * FROM `favorite_pokemon` WHERE  `userId`= :id', { id }) as FavoriteResult;
 
-    return result.map((fav) => new FavoritePokemonRecord(fav));
+    console.log(result);
+
+    return result.map((fav) => new FavoritePokemonRecord(fav).property);
   }
 }

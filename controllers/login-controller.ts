@@ -19,7 +19,7 @@ export const login: RequestHandler = (req, res, _next) => {
   res.cookie('auth', token, {
     // secure: true,
     signed: true,
-    httpOnly: true,
+    // httpOnly: true,
     maxAge: 1000 * 60 * 60,
   })
     .json('Login successful');
