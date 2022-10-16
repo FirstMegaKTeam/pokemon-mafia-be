@@ -15,12 +15,12 @@ const PORT = 5000;
 const app = express();
 
 app.use(cors({
-  origin: 'http://localhost:3000',
+    origin: 'http://localhost:3000',
 }));
 
 app.use(rateLimit({
-  windowMs: 5 * 60 * 1000,
-  max: 1000,
+    windowMs: 5 * 60 * 1000,
+    max: 1000,
 }));
 app.use(cookieParser(COOKIE_SIGN_SECRET));
 app.use(express.json());
@@ -28,7 +28,7 @@ app.use(passport.initialize());
 
 // Routers
 app.use('/register', registerRouter);
-app.use('/login', passport.authenticate('login', { session: false, failWithError: true }), loginRouter);
+app.use('/login', passport.authenticate('login', {session: false, failWithError: true}), loginRouter);
 // app.get('/check', passport.authenticate('userAccess', { session: false, failWithError: true }), (_req, res, _next) => {
 //   res.json('work');
 // });

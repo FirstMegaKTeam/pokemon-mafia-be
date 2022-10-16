@@ -10,53 +10,53 @@ let fav3: FavoritePokemonRecord;
 let fav4: FavoritePokemonRecord;
 
 beforeAll(async () => {
-  await FavoritePokemonRecord.createFavoritePokemonTable();
+    await FavoritePokemonRecord.createFavoritePokemonTable();
 
-  await pool.execute('DELETE FROM `favorite_pokemon` WHERE  1');
-  fav1 = new FavoritePokemonRecord({
-    id,
-    userId: userId1,
-    pokemonId: 'pokemon1id',
-  });
+    await pool.execute('DELETE FROM `favorite_pokemon` WHERE  1');
+    fav1 = new FavoritePokemonRecord({
+        id,
+        userId: userId1,
+        pokemonId: 'pokemon1id',
+    });
 
-  fav2 = new FavoritePokemonRecord({
-    userId: userId2,
-    pokemonId: 'pokemon1id',
-  });
+    fav2 = new FavoritePokemonRecord({
+        userId: userId2,
+        pokemonId: 'pokemon1id',
+    });
 
-  fav3 = new FavoritePokemonRecord({
-    userId: userId2,
-    pokemonId: 'pokemon3id',
-  });
+    fav3 = new FavoritePokemonRecord({
+        userId: userId2,
+        pokemonId: 'pokemon3id',
+    });
 
-  fav4 = new FavoritePokemonRecord({
-    userId: userId1,
-    pokemonId: 'pokemon4id',
-  });
+    fav4 = new FavoritePokemonRecord({
+        userId: userId1,
+        pokemonId: 'pokemon4id',
+    });
 
-  await fav1.save();
-  await fav2.save();
-  await fav3.save();
-  await fav4.save();
+    await fav1.save();
+    await fav2.save();
+    await fav3.save();
+    await fav4.save();
 });
 
 afterAll(async () => {
-  await pool.end();
+    await pool.end();
 });
 
 test('FavoritePokemonRecord should correct save', async () => {
-  const favAr = await FavoritePokemonRecord.getAll();
+    const favAr = await FavoritePokemonRecord.getAll();
 
-  expect(favAr).toBeDefined();
-  expect(favAr.length).toBe(4);
+    expect(favAr).toBeDefined();
+    expect(favAr.length).toBe(4);
 });
 
 test('Remove should  remove record from db', async () => {
-  await fav1.remove();
-  const favAr = await FavoritePokemonRecord.getAll();
+    await fav1.remove();
+    const favAr = await FavoritePokemonRecord.getAll();
 
-  const emptyArr = favAr.filter((el) => el.id === id);
+    const emptyArr = favAr.filter((el) => el.id === id);
 
-  expect(favAr.length).toBe(3);
-  expect(emptyArr.length).toBe(0);
+    expect(favAr.length).toBe(3);
+    expect(emptyArr.length).toBe(0);
 });

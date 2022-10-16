@@ -4,4 +4,4 @@ import { login } from '../controllers/login-controller';
 export const loginRouter = Router();
 
 loginRouter
-  .post('/', login);
+    .post('/', login);

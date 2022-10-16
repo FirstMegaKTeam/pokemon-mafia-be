@@ -4,4 +4,4 @@ import { registerController } from '../controllers/register-controller';
 export const registerRouter = Router();
 
 registerRouter
-  .post('/', registerController);
+    .post('/', registerController);

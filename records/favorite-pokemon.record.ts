@@ -5,82 +5,82 @@ import { FavoriteEntity, CreateFavorite } from '../types';
 import { FavoriteResult } from '../types/favorite-pokemon/favorite-result';
 
 export class FavoritePokemonRecord implements FavoriteEntity {
-  #id!: string;
+    #id!: string;
 
-  #userId!: string;
+    #userId!: string;
 
-  #pokemonId!: string;
+    #pokemonId!: string;
 
-  get pokemonId() {
-    return this.#pokemonId;
-  }
-
-  set pokemonId(value: string) {
-    if (!value || value.trim().length === 0) {
-      throw new ValidationError('The pokemon you want to add to your favorites has been incorrectly selected', 404);
+    get pokemonId() {
+        return this.#pokemonId;
     }
 
-    this.#pokemonId = value;
-  }
+    set pokemonId(value: string) {
+        if (!value || value.trim().length === 0) {
+            throw new ValidationError('The pokemon you want to add to your favorites has been incorrectly selected', 404);
+        }
 
-  get userId() {
-    return this.#userId;
-  }
-
-  set userId(value: string) {
-    if (!value || value.trim().length === 0) {
-      throw new ValidationError('We cannot find your ID. Remember that you must be logged in', 404);
-    }
-    this.#userId = value;
-  }
-
-  get id() {
-    return this.#id;
-  }
-
-  private set id(value: string) {
-    if (!value || value.trim().length === 0) {
-      throw new Error('Id FavoritePokemonRecord is required');
+        this.#pokemonId = value;
     }
 
-    this.#id = value;
-  }
+    get userId() {
+        return this.#userId;
+    }
 
-  get property() {
-    return {
-      id: this.id,
-      userId: this.userId,
-      pokemonId: this.pokemonId,
-    };
-  }
+    set userId(value: string) {
+        if (!value || value.trim().length === 0) {
+            throw new ValidationError('We cannot find your ID. Remember that you must be logged in', 404);
+        }
+        this.#userId = value;
+    }
 
-  constructor(favoritePokemon: CreateFavorite) {
-    this.id = favoritePokemon.id ?? nanoid();
-    this.pokemonId = favoritePokemon.pokemonId;
-    this.userId = favoritePokemon.userId;
-  }
+    get id() {
+        return this.#id;
+    }
 
-  static async createFavoritePokemonTable() {
-    await pool.execute('CREATE TABLE IF NOT EXISTS `favorite_pokemon`(`id` VARCHAR(21)  PRIMARY KEY NOT NULL, `userId` VARCHAR(21) , `pokemonId` VARCHAR(21)  NOT NULL,  FOREIGN KEY (`userId`) REFERENCES `users` (`id`) ON DELETE CASCADE ON UPDATE CASCADE)');
-  }
+    private set id(value: string) {
+        if (!value || value.trim().length === 0) {
+            throw new Error('Id FavoritePokemonRecord is required');
+        }
 
-  async save() {
-    await pool.execute('INSERT INTO `favorite_pokemon` (`id`, `userId`, `pokemonId`) VALUES (:id,  :userId, :pokemonId)', {
-      id: this.id,
-      pokemonId: this.pokemonId,
-      userId: this.userId,
-    });
-  }
+        this.#id = value;
+    }
 
-  async remove() {
-    await pool.execute('DELETE FROM `favorite_pokemon` WHERE `id`=:id', {
-      id: this.id,
-    });
-  }
+    get property() {
+        return {
+            id: this.id,
+            userId: this.userId,
+            pokemonId: this.pokemonId,
+        };
+    }
 
-  static async getAll() {
-    const [result] = await pool.execute('SELECT * FROM `favorite_pokemon` WHERE 1') as FavoriteResult;
+    constructor(favoritePokemon: CreateFavorite) {
+        this.id = favoritePokemon.id ?? nanoid();
+        this.pokemonId = favoritePokemon.pokemonId;
+        this.userId = favoritePokemon.userId;
+    }
 
-    return result.map((fav) => new FavoritePokemonRecord(fav));
-  }
+    static async createFavoritePokemonTable() {
+        await pool.execute('CREATE TABLE IF NOT EXISTS `favorite_pokemon`(`id` VARCHAR(21)  PRIMARY KEY NOT NULL, `userId` VARCHAR(21) , `pokemonId` VARCHAR(21)  NOT NULL,  FOREIGN KEY (`userId`) REFERENCES `users` (`id`) ON DELETE CASCADE ON UPDATE CASCADE)');
+    }
+
+    async save() {
+        await pool.execute('INSERT INTO `favorite_pokemon` (`id`, `userId`, `pokemonId`) VALUES (:id,  :userId, :pokemonId)', {
+            id: this.id,
+            pokemonId: this.pokemonId,
+            userId: this.userId,
+        });
+    }
+
+    async remove() {
+        await pool.execute('DELETE FROM `favorite_pokemon` WHERE `id`=:id', {
+            id: this.id,
+        });
+    }
+
+    static async getAll() {
+        const [result] = await pool.execute('SELECT * FROM `favorite_pokemon` WHERE 1') as FavoriteResult;
+
+        return result.map((fav) => new FavoritePokemonRecord(fav));
+    }
 }
